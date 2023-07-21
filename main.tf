@@ -28,6 +28,8 @@ data "archive_file" "edge_function_archives" {
   type        = "zip"
   source_file = local.edge_functions[count.index].path
   output_path =  "function_archives/${local.edge_functions[count.index].name}.zip"
+
+  depends_on = [ null_resource.build_edge_functions ]
 }
 
 resource "aws_lambda_function" "edge_functions" {
