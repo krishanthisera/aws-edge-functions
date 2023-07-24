@@ -43,7 +43,7 @@ export const handler = async (event: CloudFrontRequestEvent): Promise<CloudFront
       request.uri += "index.html"
     }
     // Check whether the URI is missing a file extension.
-    else if (request.uri.includes(".")) {
+    else {
       request.uri += "/index.html"
     }
   }
