@@ -37,7 +37,7 @@ resource "aws_lambda_function" "edge_functions" {
   # path.module in the filename.
   count         = length(local.edge_functions)
   filename      = "function_archives/${local.edge_functions[count.index].name}.zip"
-  function_name = "${local.edge_functions[count.index].name}_function"
+  function_name = "${local.edge_functions[count.index].name}"
   handler       = local.edge_functions[count.index].handler
   publish       = true
   memory_size   = 128
