@@ -27,7 +27,7 @@ data "archive_file" "edge_function_archives" {
   count       = length(local.edge_functions)
   type        = "zip"
   source_file = local.edge_functions[count.index].path
-  output_path =  "function_archives/${local.edge_functions[count.index].name}.zip"
+  output_path =  "${path.module}/${var.edge_function_path}/function_archives/${local.edge_functions[count.index].name}.zip"
 
   depends_on = [ null_resource.build_edge_functions ]
 }
@@ -36,7 +36,7 @@ resource "aws_lambda_function" "edge_functions" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
   count         = length(local.edge_functions)
-  filename      = "function_archives/${local.edge_functions[count.index].name}.zip"
+  filename      = "${path.module}/${var.edge_function_path}/function_archives/${local.edge_functions[count.index].name}.zip"
   function_name = "${local.edge_functions[count.index].name}"
   handler       = local.edge_functions[count.index].handler
   publish       = true

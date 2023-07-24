@@ -6,7 +6,7 @@ resource "null_resource" "check_node_version" {
 
   provisioner "local-exec" {
     command     = "node --version"
-    working_dir = var.edge_function_path
+    working_dir = "${path.module}/${var.edge_function_path}"
 
     interpreter = ["bash", "-c"]
 
@@ -22,7 +22,7 @@ resource "null_resource" "build_edge_functions" {
 
   provisioner "local-exec" {
     command     = "npm ci && npm run build"
-    working_dir = var.edge_function_path
+    working_dir = "${path.module}/${var.edge_function_path}"
 
     interpreter = ["bash", "-c"]
 
