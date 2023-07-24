@@ -2,22 +2,22 @@ locals {
   edge_functions = [
     {
       name = "prerender"
-      path = "edge-functions/packages/prerender/build/index.js"
+      path = "${var.edge_function_path}/packages/prerender/build/index.js"
       handler = "index.handler"
     },
     {
       name = "prerender-check"
-      path = "edge-functions/packages/prerender-check/build/index.js"
+      path = "${var.edge_function_path}/packages/prerender-check/build/index.js"
       handler = "index.handler"
     },
     {
       name = "error-response"
-      path = "edge-functions/packages/error-response/build/index.js"
+      path = "${var.edge_function_path}/packages/error-response/build/index.js"
       handler = "index.handler"
     },
     {
       name = "cache-control"
-      path = "edge-functions/packages/cache-control/build/index.js"
+      path = "${var.edge_function_path}/packages/cache-control/build/index.js"
       handler = "index.handler"
     }
   ]
@@ -26,7 +26,7 @@ locals {
 data "archive_file" "edge_function_archives" {
   count       = length(local.edge_functions)
   type        = "zip"
-  source_file = "${path.module}/${var.edge_function_path}/${local.edge_functions[count.index].path}"
+  source_file = "${path.module}/${local.edge_functions[count.index].path}"
   output_path =  "${path.module}/${var.edge_function_path}/function_archives/${local.edge_functions[count.index].name}.zip"
 
   depends_on = [ null_resource.build_edge_functions ]
