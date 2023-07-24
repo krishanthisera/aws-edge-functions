@@ -85,3 +85,6 @@ Thumbs.db
 
 # function_archives
 function_archives/
+
+# Exclude ESBUILD configs
+!esbuild.js
