@@ -50,4 +50,3 @@ export const handler = async (event: CloudFrontRequestEvent): Promise<CloudFront
 
   return request
 }
-1
