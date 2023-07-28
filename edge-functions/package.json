@@ -16,7 +16,7 @@
     "dotenv-cli": "latest",
     "eslint": "^8.45.0",
     "prettier": "^3.0.0",
-    "turbo": "latest",
+    "turbo": "1.9.9",
     "typescript": "^5.1.6",
     "yarn": "^1.22.19"
   },
