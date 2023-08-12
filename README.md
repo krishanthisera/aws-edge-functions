@@ -12,7 +12,7 @@ module "edge-functions" {
 }
 ```
 
-After adding the module, run `terraform init`` to initialize your configuration.
+After adding the module, run `terraform init` to initialize your configuration.
 
 ## Technologies Used
 
@@ -22,7 +22,6 @@ This module is built using the following technologies and tools:
 - TypeScript: Language used to write the Lambda@Edge functions.
 - turbo-repo: A tool used for repository management and monorepo setups.
 - esbuild: Used to bundle the TypeScript code and set environment variables during the build process.
-- Docker: A Dockerfile is provided to facilitate usage with Spacelift runner.
 
 ## How to Use as a Terraform Module
 

@@ -11,11 +11,6 @@ locals {
       handler = "index.handler"
     },
     {
-      name = "error-response"
-      path = "${var.edge_function_path}/packages/error-response/build/index.js"
-      handler = "index.handler"
-    },
-    {
       name = "cache-control"
       path = "${var.edge_function_path}/packages/cache-control/build/index.js"
       handler = "index.handler"

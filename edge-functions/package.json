@@ -9,6 +9,7 @@
   "dependencies": {
     "@types/aws-lambda": "^8.10.119",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.3.0",
     "@yarnpkg/esbuild-plugin-pnp": "^3.0.0-rc.15",
     "aws-lambda": "^1.0.7",
     "axios": "^1.4.0",
@@ -18,6 +19,7 @@
     "prettier": "^3.0.0",
     "turbo": "1.9.9",
     "typescript": "^5.1.6",
+    "typescript-eslint": "^0.0.1-alpha.0",
     "yarn": "^1.22.19"
   },
   "scripts": {
