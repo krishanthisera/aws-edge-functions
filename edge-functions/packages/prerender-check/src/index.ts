@@ -1,7 +1,6 @@
 /**
  * This function checks if the request is from a bot and if it is a bot
  * then it sets the x-request-prerender header so the origin-request lambda function
- * This function is a copied from https://github.com/aligent/cdk-constructs/blob/main/packages/prerender-proxy/lib/handlers/prerender-check.ts
  */
 import "source-map-support/register"
 import { CloudFrontRequest, CloudFrontRequestEvent } from "aws-lambda"

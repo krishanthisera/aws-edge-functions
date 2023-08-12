@@ -38,7 +38,6 @@ resource "aws_lambda_function" "edge_functions" {
   memory_size   = 128
   role          = aws_iam_role.lambda_edge_exec.arn
 
-
   source_code_hash = data.archive_file.edge_function_archives[count.index].output_base64sha256
 
   runtime = "nodejs16.x"
