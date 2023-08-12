@@ -5,7 +5,7 @@ resource "null_resource" "check_node_version" {
   }
 
   provisioner "local-exec" {
-    command     = "node --version"
+    command     = "npx yarn version  --non-interactive"
     working_dir = "${path.module}/${var.edge_function_path}"
 
     interpreter = ["bash", "-c"]
@@ -21,7 +21,7 @@ resource "null_resource" "build_edge_functions" {
   }
 
   provisioner "local-exec" {
-    command     = "npm ci && npm run build"
+    command     = "npx yarn install  --non-interactive && npx yarn build"
     working_dir = "${path.module}/${var.edge_function_path}"
 
     interpreter = ["bash", "-c"]
