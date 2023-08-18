@@ -1,6 +1,13 @@
+/**
+ * This module contains a Lambda function that processes CloudFront Origin requests.
+ * Depending on the headers and conditions, it might set the request to be prerendered.
+ */
+
+// Importing required modules and types
 import "source-map-support/register"
 import { CloudFrontRequest, CloudFrontRequestEvent, CloudFrontResponse } from "aws-lambda"
 
+// Retrieving environment variables for prerender configurations
 const PRERENDER_TOKEN = process.env.PRERENDER_TOKEN || ""
 const PATH_PREFIX = process.env.PATH_PREFIX || ""
 const PRERENDER_URL = process.env.PRERENDER_URL || "service.prerender.io"
@@ -8,16 +15,15 @@ const PRERENDER_URL = process.env.PRERENDER_URL || "service.prerender.io"
 export const handler = async (event: CloudFrontRequestEvent): Promise<CloudFrontResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request
 
-  // viewer-request function will determine whether we prerender or not
-  // if we should we add prerender as our custom origin
+  // If the request has the x-request-prerender header, it means the viewer-request function determined it should be prerendered
   if (request.headers["x-request-prerender"]) {
-    // Cloudfront will alter the request for / to /index.html
-    // since it is defined as the default root object
-    // we do not want to do this when prerendering the homepage
+    // CloudFront alters requests for the root path to the default root object, /index.html.
+    // However, when prerendering the homepage, this behavior is not desired.
     if (request.uri === `${PATH_PREFIX}/index.html`) {
       request.uri = `${PATH_PREFIX}/`
     }
 
+    // Modify the request's origin to be the prerender service
     request.origin = {
       custom: {
         domainName: PRERENDER_URL,
@@ -38,12 +44,9 @@ export const handler = async (event: CloudFrontRequestEvent): Promise<CloudFront
       },
     }
   } else {
-    // Check whether the URI is missing a file name.
     if (request.uri.endsWith("/")) {
       request.uri += "index.html"
-    }
-    // Check whether the URI is missing a file extension.
-    else if (!request.uri.includes(".")) {
+    } else if (!request.uri.includes(".")) {
       request.uri += "/index.html"
     }
   }
