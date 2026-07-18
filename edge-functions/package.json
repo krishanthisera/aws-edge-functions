@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "turbo run build --no-cache",
+    "test": "turbo run test",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
     "lint:check": "npm run lint",
     "lint:fix": "npm run lint --fix",
@@ -33,8 +34,12 @@
   },
   "devDependencies": {
     "@types/node": "^20.4.2",
+    "@types/source-map-support": "^0.5.10",
+    "@vitest/coverage-v8": "^1.6.0",
     "esbuild": "^0.18.14",
-    "ts-node": "^10.9.1"
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "vitest": "^1.6.0"
   },
   "packageManager": "yarn@1.22.17"
 }
