@@ -1,30 +1,10 @@
-locals {
-  edge_functions = [
-    {
-      name = "prerender-proxy"
-      path = "${var.edge_function_path}/packages/prerender-proxy/build/index.js"
-      handler = "index.handler"
-    },
-    {
-      name = "filter-function"
-      path = "${var.edge_function_path}/packages/filter-function/build/index.js"
-      handler = "index.handler"
-    },
-    {
-      name = "response-handler"
-      path = "${var.edge_function_path}/packages/response-handler/build/index.js"
-      handler = "index.handler"
-    }
-  ]
-}
-
 data "archive_file" "edge_function_archives" {
   count       = length(local.edge_functions)
   type        = "zip"
   source_file = "${path.module}/${local.edge_functions[count.index].path}"
-  output_path =  "${path.module}/${var.edge_function_path}/function_archives/${local.edge_functions[count.index].name}.zip"
+  output_path = "${path.module}/${var.edge_function_path}/function_archives/${local.edge_functions[count.index].name}.zip"
 
-  depends_on = [ null_resource.build_edge_functions ]
+  depends_on = [null_resource.build_edge_functions]
 }
 
 resource "aws_lambda_function" "edge_functions" {
@@ -32,7 +12,7 @@ resource "aws_lambda_function" "edge_functions" {
   # path.module in the filename.
   count         = length(local.edge_functions)
   filename      = "${path.module}/${var.edge_function_path}/function_archives/${local.edge_functions[count.index].name}.zip"
-  function_name = "${local.edge_functions[count.index].name}"
+  function_name = local.edge_functions[count.index].name
   handler       = local.edge_functions[count.index].handler
   publish       = true
   memory_size   = 128
