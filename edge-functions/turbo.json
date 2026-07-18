@@ -1,7 +1,6 @@
 {
-  "pipeline": {
+  "tasks": {
     "build": {
-      "dotEnv": ["../../.env"],
       "dependsOn": ["^build"],
       "outputs": ["build/**"]
     },

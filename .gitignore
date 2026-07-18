@@ -88,3 +88,5 @@ function_archives/
 
 # Exclude ESBUILD configs
 !esbuild.js
+
+*/.turbo/
