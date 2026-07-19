@@ -16,7 +16,7 @@ export const buildNode = async ({ ...args }) => {
   await build({
     entryPoints: await fg("src/*.ts"),
     platform: "node",
-    target: "node16",
+    target: "node22",
     format: "cjs",
     outdir: "./build",
     sourcemap: false,

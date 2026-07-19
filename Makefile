@@ -59,3 +59,9 @@ format-fix: ## Fix formatting across all packages
 .PHONY: build
 build: ## Build all packages
 	cd edge-functions && yarn build
+
+##@ Docs
+
+.PHONY: docs
+docs: ## Regenerate Terraform documentation (requires terraform-docs)
+	terraform-docs markdown table --output-file README.md --output-mode inject .

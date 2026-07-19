@@ -1,10 +1,37 @@
-# AWS Edge Functions - Terraform Sub-Module
+# AWS Edge Functions
 
-This repository serves as a Terraform sub-module designed for use with the AWS Static Hosting module. The primary purpose of this module is to deploy a set of Lambda@Edge functions that provide prerender integration for CloudFront. This enables faster page loading and improved search engine indexing for Single Page Applications (SPAs) and other dynamic web applications.
+A Terraform sub-module that deploys Lambda@Edge functions to enable prerendering and enhanced CloudFront request handling for Single Page Applications (SPAs).
+
+## Architecture
+
+```
+  CloudFront Distribution
+         │
+         ├── Viewer Request  ──►  filter-function   (should this request be prerendered?)
+         │
+         ├── Origin Request  ──►  prerender-proxy   (proxy to Prerender.io for bots/crawlers)
+         │
+         ├── Origin Request  ──►  geo-redirect      (redirect based on geographic location)
+         │
+         └── Origin Response ──►  response-handler  (set cache-control headers)
+```
+
+## Lambda@Edge Functions
+
+| Function | CloudFront Event | Description |
+|---|---|---|
+| `filter-function` | Viewer Request | Inspects the incoming request and determines whether it should be forwarded to the prerender service |
+| `prerender-proxy` | Origin Request | Proxies bot/crawler traffic to [Prerender.io](https://prerender.io) and returns a server-side rendered HTML response |
+| `geo-redirect` | Origin Request | Redirects users to region-specific origins based on their geographic location |
+| `response-handler` | Origin Response | Applies cache-control headers to origin responses |
+
+## Prerequisites
+
+- [Terraform](https://developer.hashicorp.com/terraform/install) `~> 1.15`
+- [Node.js](https://nodejs.org) `>= 22.x`
+- [Yarn](https://yarnpkg.com) `>= 1.22`
 
 ## Usage
-
-To use this module in your Terraform configuration, simply add the following code:
 
 ```hcl
 module "edge-functions" {
@@ -12,33 +39,103 @@ module "edge-functions" {
 }
 ```
 
-After adding the module, run `terraform init` to initialize your configuration.
+Run `terraform init` after adding the module to download it.
 
-## Technologies Used
+For a full integration example, see the [AWS Static Hosting repository](https://github.com/krishanthisera/aws-static-hosting/tree/main).
 
-This module is built using the following technologies and tools:
+## Environment Variables
 
-- Terraform: Infrastructure as Code (IaC) tool used to manage AWS resources.
-- TypeScript: Language used to write the Lambda@Edge functions.
-- turbo-repo: A tool used for repository management and monorepo setups.
-- esbuild: Used to bundle the TypeScript code and set environment variables during the build process.
+Lambda@Edge functions **cannot** use runtime environment variables. Instead, esbuild bakes them in at build time. Create a `.env` file in `edge-functions/` before building:
 
-## How to Use as a Terraform Module
+| Variable | Function | Description |
+|---|---|---|
+| `PRERENDER_TOKEN` | `prerender-proxy` | API token for Prerender.io |
+| `PRERENDER_URL` | `prerender-proxy` | Prerender service base URL (e.g. `service.prerender.io`) |
+| `PATH_PREFIX` | `prerender-proxy` | URL path prefix to strip before forwarding |
 
-To use this repository as a Terraform module, you can refer to the example provided in the [AWS Static Hosting repository](https://github.com/krishanthisera/aws-static-hosting/tree/main). It showcases how to integrate this module to enable prerendering with CloudFront.
+## Development
 
-## Prerender Integration
+### Install dependencies
 
-The deployed Lambda@Edge functions work in conjunction with CloudFront to perform prerendering. This means that when a request is made to CloudFront for a page of your SPA (from a crawler), the Lambda@Edge functions will leverage prerender service to generate a prerendered version of the page and serve it to the user. This leads to improved page loading times and better SEO performance.
+```sh
+make install
+```
 
-## Handling Environment Variables
+### Build all functions
 
-As you are not able to set environment variables at runtime for the Lambda@Edge functions, during the build process, esbuild is used to configure the necessary environment variables and bundle them into the build artifacts.
+```sh
+make build
+```
 
-## How to Contribute
+### Run tests
 
-Contributions to this project are welcome! If you have any bug reports, feature requests, or improvements to suggest, you can do so by creating a pull request or opening an issue. Your feedback is highly valuable to us, and we appreciate any contributions made to enhance this module.
+```sh
+make test
 
-## Contact
+# Per-function
+make test-prerender-proxy
+make test-filter-function
+make test-geo-redirect
+make test-response-handler
+```
 
-If you have any questions or need further assistance, you can contact the project maintainer by creating an issue in this repository.
+### Lint and format
+
+```sh
+make lint        # check
+make lint-fix    # auto-fix
+make format      # check
+make format-fix  # auto-fix
+```
+
+### Regenerate Terraform docs
+
+```sh
+make docs
+```
+
+Requires [`terraform-docs`](https://terraform-docs.io/user-guide/installation/) to be installed.
+
+## Contributing
+
+Pull requests and issues are welcome. Please open an issue first for significant changes.
+
+---
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.15 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.55 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.8.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.55.0 |
+| <a name="provider_null"></a> [null](#provider\_null) | 3.3.0 |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_iam_role.lambda_edge_exec](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_lambda_function.edge_functions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
+| [null_resource.build_edge_functions](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.check_node_version](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_edge_function_path"></a> [edge\_function\_path](#input\_edge\_function\_path) | n/a | `string` | `"edge-functions"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_function_arns"></a> [function\_arns](#output\_function\_arns) | n/a |
+<!-- END_TF_DOCS -->

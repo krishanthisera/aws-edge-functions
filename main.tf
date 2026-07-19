@@ -20,7 +20,7 @@ resource "aws_lambda_function" "edge_functions" {
 
   source_code_hash = data.archive_file.edge_function_archives[count.index].output_base64sha256
 
-  runtime = "nodejs16.x"
+  runtime = "nodejs22.x"
 
 }
 
