@@ -1,7 +1,7 @@
 resource "null_resource" "check_node_version" {
 
   triggers = {
-    always_run = timestamp()
+    package_json = filesha256("${path.module}/${var.edge_function_path}/package.json")
   }
 
   provisioner "local-exec" {
@@ -17,7 +17,10 @@ resource "null_resource" "check_node_version" {
 resource "null_resource" "build_edge_functions" {
 
   triggers = {
-    always_run = timestamp()
+    source_hash = sha1(join("", [
+      for f in sort(fileset("${path.module}/${var.edge_function_path}/packages", "*/src/*.ts")) :
+      filesha256("${path.module}/${var.edge_function_path}/packages/${f}")
+    ]))
   }
 
   provisioner "local-exec" {
